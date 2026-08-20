@@ -159,3 +159,89 @@ plt.tight_layout()
 plt.savefig("Section_4_v2.png", dpi=300)
 print("Saved: Section_4_v2.png")
 plt.show()
+
+# Zoom figure 
+# Same rate function, only the plot limits and step sizes change.
+
+fig2, axz = plt.subplots(1, 2, figsize=(14, 5))
+
+zoom_L2 = 500.0
+zoom_vz = 0.5
+
+# Left: intermediate zoom, fine step
+ax = axz[0]
+L_mid = np.arange(300.0, 305.0 + 1e-9, 0.005)
+r_mid = [rate_2D(fixed_DE, L, zoom_L2, zoom_vz, LAMBDA) for L in L_mid]
+ax.plot(L_mid, r_mid, lw=0.8, color='C0')
+ax.axhline(-fixed_DE / (2*np.pi), color='k', ls='--', lw=0.8, alpha=0.4)
+ax.set_title("Zoom of the top-left panel of Fig. 1: $L_1$ from 300 to 305")
+ax.set_xlabel("$L_1$")
+ax.set_ylabel("Transition Rate")
+ax.grid(True, alpha=0.2)
+
+# Right: deep zoom, two step sizes and two cutoffs
+ax = axz[1]
+L_deep_f = np.arange(302.0, 302.5 + 1e-12, 0.0005)
+L_deep_c = np.arange(302.0, 302.5 + 1e-12, 0.005)
+L_deep_f2 = np.arange(302.0, 302.5 + 1e-12, 0.00005)
+r_deep_f  = [rate_2D(fixed_DE, L, zoom_L2, zoom_vz, LAMBDA) for L in L_deep_f]
+r_deep_c  = [rate_2D(fixed_DE, L, zoom_L2, zoom_vz, LAMBDA) for L in L_deep_c]
+r_deep_f2 = [rate_2D(fixed_DE, L, zoom_L2, zoom_vz, LAMBDA) for L in L_deep_f2]
+ax.plot(L_deep_f, r_deep_f, lw=1.0, color='C0',
+        label="step $5\\times10^{-4}$, $\\Lambda=10^4$")
+ax.plot(L_deep_c, r_deep_c, 'o', ms=3.5, color='C1',
+        label="step $5\\times10^{-3}$, $\\Lambda=10^4$")
+ax.plot(L_deep_f2, r_deep_f2, lw=1.0, color='C3', alpha=0.55,
+     label="step $5\\times10^{-5}$, $\\Lambda=10^4$")
+ax.set_title("Deep zoom: $L_1$ from 302.0 to 302.5")
+ax.set_xlabel("$L_1$")
+ax.set_ylabel("Transition Rate")
+ax.legend(fontsize=9)
+ax.grid(True, alpha=0.2)
+
+plt.tight_layout()
+plt.savefig("Section_4_zoom.png", dpi=300)
+print("Saved: Section_4_zoom.png")
+plt.show()
+
+
+fig2, axz = plt.subplots(1, 2, figsize=(14, 5))
+
+zoom_L1 = 500.0
+zoom_vz = 0.5
+
+# Left: intermediate zoom, fine step
+ax = axz[0]
+L_mid = np.arange(300.0, 305.0 + 1e-9, 0.005)
+r_mid = [rate_2D(fixed_DE, zoom_L1, L, zoom_vz, LAMBDA) for L in L_mid]
+ax.plot(L_mid, r_mid, lw=0.8, color='C0')
+ax.axhline(-fixed_DE / (2*np.pi), color='k', ls='--', lw=0.8, alpha=0.4)
+ax.set_title("Zoom of the top-left panel of Fig. 1: $L_2$ from 300 to 305")
+ax.set_xlabel("$L_2$")
+ax.set_ylabel("Transition Rate")
+ax.grid(True, alpha=0.2)
+
+# Right: deep zoom, two step sizes and two cutoffs
+ax = axz[1]
+L_deep_f = np.arange(302.0, 302.5 + 1e-12, 0.0005)
+L_deep_c = np.arange(302.0, 302.5 + 1e-12, 0.005)
+L_deep_f2 = np.arange(302.0, 302.5 + 1e-12, 0.00005)
+r_deep_f  = [rate_2D(fixed_DE, zoom_L1, L, zoom_vz, LAMBDA) for L in L_deep_f]
+r_deep_c  = [rate_2D(fixed_DE, zoom_L1, L, zoom_vz, LAMBDA) for L in L_deep_c]
+r_deep_f2 = [rate_2D(fixed_DE, zoom_L1, L, zoom_vz, LAMBDA) for L in L_deep_f2]
+ax.plot(L_deep_f, r_deep_f, lw=1.0, color='C0',
+        label="step $5\\times10^{-4}$, $\\Lambda=10^4$")
+ax.plot(L_deep_c, r_deep_c, 'o', ms=3.5, color='C1',
+        label="step $5\\times10^{-3}$, $\\Lambda=10^4$")
+ax.plot(L_deep_f2, r_deep_f2, lw=1.0, color='C3', alpha=0.55,
+     label="step $5\\times10^{-5}$, $\\Lambda=10^4$")
+ax.set_title("Deep zoom: $L_2$ from 302.0 to 302.5")
+ax.set_xlabel("$L_2$")
+ax.set_ylabel("Transition Rate")
+ax.legend(fontsize=9)
+ax.grid(True, alpha=0.2)
+
+plt.tight_layout()
+plt.savefig("Section_4_zoom.png", dpi=300)
+print("Saved: Section_4_zoom.png")
+plt.show()
