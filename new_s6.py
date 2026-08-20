@@ -26,15 +26,20 @@ def build_lattice(L1, L2, Lambda):
     return M_out[order], N_out[order]
 
 
-def unruh_planck(DeltaE, alpha):
-   #Planck spectrum term
+def thermal_factor(DeltaE, alpha):
+   #the factor 1/(exp(2 pi alpha DeltaE) - 1), with overflow protection
     x = 2.0 * np.pi * alpha * DeltaE
     if x > LAMBDA:
-        return (DeltaE / (2.0 * np.pi)) * np.exp(-x)
+        return np.exp(-x)
     elif x < -LAMBDA:
-        return -DeltaE / (2.0 * np.pi)
+        return -1.0
     else:
-        return (DeltaE / (2.0 * np.pi)) / (np.exp(x) - 1.0)
+        return 1.0 / (np.exp(x) - 1.0)
+
+
+def unruh_planck(DeltaE, alpha):
+   #Planck spectrum term
+    return (DeltaE / (2.0 * np.pi)) * thermal_factor(DeltaE, alpha)
 
 
 def deexcitation_rate(DeltaE, alpha, L1, L2, Lambda):
@@ -43,21 +48,18 @@ def deexcitation_rate(DeltaE, alpha, L1, L2, Lambda):
     # Unruh piece (same for excitation and de-excitation)
     rate = unruh_planck(DeltaE, alpha)
 
-    # Topological correction only for de-excitation 
-    if DeltaE >= 0:
-        return rate
-
-    absDE = abs(DeltaE)
+    # Topological correction, present in both channels
     M_arr, N_arr = build_lattice(L1, L2, Lambda)
     ell = np.sqrt((M_arr * L1)**2 + (N_arr * L2)**2)
 
-    # Each (m,n) contributes: sin(2 alpha |DE| arcsinh(ell/2alpha)) / (pi ell sqrt(1 + (ell/2alpha)^2))
+    # Each (m,n) contributes: sin(2 alpha DE arcsinh(ell/2alpha)) / (2 pi ell sqrt(1 + (ell/2alpha)^2))
     ratio = ell / (2.0 * alpha)
-    arg = 2.0 * alpha * absDE * np.arcsinh(ratio)
-    denom = np.pi * ell * np.sqrt(1.0 + ratio**2)
+    arg = 2.0 * alpha * DeltaE * np.arcsinh(ratio)
+    denom = 2.0 * np.pi * ell * np.sqrt(1.0 + ratio**2)
     correction = np.sum(np.sin(arg) / denom)
 
-    return rate - correction
+    # both the (0,0) term and the correction carry the same thermal factor
+    return rate + correction * thermal_factor(DeltaE, alpha)
 
 
 
@@ -142,7 +144,7 @@ ax.plot(accel_range, rates_pu, 'k--', lw=1.2, label=r'Pure Unruh ($L\to\infty$)'
 ax.set_xlabel(r'Acceleration $a = 1/\alpha\;(|\Delta E|^2)$', fontsize=12)
 ax.set_ylabel(r'$\dot{F}_{\rm eq}(\Delta E)\;(|\Delta E|)$', fontsize=12)
 ax.set_title(r'$\Delta E = -1$', fontsize=10)
-ax.legend(loc='upper left', frameon=False, fontsize=8.5)
+ax.legend(loc='upper right', frameon=False, fontsize=8.5)
 ax.grid(True, alpha=0.15)
 
 
